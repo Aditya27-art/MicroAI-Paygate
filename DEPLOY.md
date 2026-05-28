@@ -9,7 +9,7 @@ Free-tier deployment of MicroAI Paygate across three platforms. Total recurring 
 | `verifier/` (Rust) | Render Web Service | Free | Public over HTTPS; stateless EIP-712 recovery |
 | `gateway/` (Go) | Render Web Service | Free | Public; calls verifier and OpenRouter, talks to Redis |
 | `web/` (Next.js) | Vercel | Hobby | Built from `web/` subdirectory |
-| Redis | Upstash | Free | Receipt store + nonce replay protection |
+| Redis | Upstash | Free | Receipt store + optional gateway cache. Verifier nonce replay protection is currently in-memory on one verifier process. |
 
 Both Render services share a region for low inter-service latency. Both **sleep after 15 minutes of inactivity** — the first request after sleep takes 30–50 seconds while the containers wake. The web app shows a warm-up banner during this window. See [Cold-start behavior](#cold-start-behavior) for details.
 
@@ -49,6 +49,8 @@ Quick sanity check:
 ```sh
 redis-cli -u 'rediss://default:...@...upstash.io:6379' PING   # should print PONG
 ```
+
+> Note: Upstash is used for gateway receipt persistence and optional cache behavior. The verifier still uses in-memory nonce replay protection in the current implementation, so production verifier scaling requires a shared nonce store before running multiple verifier replicas.
 
 ## 2. Deploy the Verifier on Render
 

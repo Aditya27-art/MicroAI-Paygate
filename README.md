@@ -19,7 +19,7 @@
 
 The backend services (gateway + verifier) are hosted on Render's free tier and **sleep after 15 minutes of inactivity**. The first request after a quiet period takes 30–50 seconds while both services wake. The web UI shows a brief warm-up banner during this window. Subsequent requests are normal speed.
 
-The deployed stack is **Render** (Rust verifier + Go gateway) + **Vercel** (Next.js web) + **Upstash** (Redis for nonces and signed receipts). All on free tiers — total recurring cost is $0. See [DEPLOY.md](DEPLOY.md) for the step-by-step deployment guide.
+The deployed stack is **Render** (Rust verifier + Go gateway) + **Vercel** (Next.js web) + **Upstash** (Redis for signed receipts and optional gateway cache). Verifier nonce replay protection is still in memory on the single verifier process, so multi-instance verifier deployments need shared nonce storage. All on free tiers — total recurring cost is $0. See [DEPLOY.md](DEPLOY.md) for the step-by-step deployment guide.
 
 The demo runs on **Base Sepolia testnet**. A valid EIP-712 signature proves wallet authorization for the payment context; it does not move USDC on-chain. Bring a wallet on Base Sepolia to try the full sign-and-summarize flow.
 
